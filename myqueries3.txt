@@ -1,0 +1,81 @@
+-- JOINS
+
+-- So far we have been working with one table, but most of the
+-- time we need to work with more than one
+
+-- To combine data from two tables we use the SQL JOIN command, which comes after the FROM command.
+-- The JOIN command on its own will result in a cross product, where each row in the 
+-- first table is paired with each row in the second table
+-- need to tell the computer which columns provide the link between the two tables using the word ON. 
+
+-- what we want is to join the data with the same species id.
+SELECT *
+FROM surveys
+JOIN species
+ON surveys.species_id = species.species_id;
+
+-- ON is like WHERE, it filters things out according to a test condition
+-- We use the table.colname format to which table we are referring to.
+
+-- Alternative we can use the verb USING
+SELECT *
+FROM surveys
+JOIN species
+USING (species_id);
+
+-- we can select some columns
+SELECT surveys.year, surveys.month, surveys.day, species.genus, species.species
+FROM surveys
+JOIN species
+ON surveys.species_id = species.species_id;
+
+-- Challenge
+SELECT species.genus, species.species, surveys.weight
+FROM surveys
+JOIN species
+ON surveys.species_id = species.species_id
+WHERE weight != '';
+
+SELECT COUNT(*)
+FROM surveys
+JOIN species
+USING (species_id);
+
+SELECT COUNT(*)
+FROM surveys;
+
+-- by default, SQL only returns records where the joining value is present in the joined 
+-- columns of both tables (i.e. it takes the intersection of the two join columns). 
+-- this is also a short cut for INNER JOIN
+
+-- Other JOINS
+-- We can also tell the computer that we wish to keep all the records in the first table by using the command 
+-- LEFT JOIN .
+
+-- Challenge
+-- Re-write the original query to keep all the entries present in the surveys table. 
+-- How many records are returned by this query?
+SELECT * 
+FROM surveys
+LEFT JOIN species
+USING (species_id);
+
+-- Let's dive in into a longer query
+-- Calculate average mass of the individuals on each different plot_type
+
+SELECT plots.plot_type, AVG(surveys.weight)
+FROM surveys
+JOIN plots
+ON surveys.plot_id = plots.plot_id
+GROUP BY plots.plot_type;
+
+-- Challenge
+-- What is the average weight of each Rodent species over the course of the years? 
+-- Is there any noticeable trend for any of the species?
+
+SELECT surveys.species_id, year, AVG(weight) as mean_weight
+FROM surveys 
+JOIN species 
+ON surveys.species_id = species.species_id 
+WHERE taxa = 'Rodent'
+GROUP BY surveys.species_id, year;

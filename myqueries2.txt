@@ -1,0 +1,118 @@
+--  Questions
+-- How can I summarize my data by aggregating, filtering, or ordering query
+--results?
+-- How can I make sure column names from my queries make sense and aren’t too
+--long?
+
+-- Objectives
+
+--  Apply aggregation to group records in SQL.
+--  Filter and order results of a query based on aggregate functions.
+--  Employ aliases to assign new names to items in a query.
+--  Save a query to make a new table.
+--  Apply filters to find missing values in SQL.
+
+-- COUNT and GROUP BY
+SELECT COUNT(*)
+FROM surveys;
+
+SELECT COUNT(), AVG(weight), SUM(weight)
+FROM surveys;
+
+
+-- MAX, MIN, AVG
+-- forcing to have a decimal
+SELECT ROUND(SUM(weight)/1000.00, 3), MAX(weight)
+FROM surveys;
+
+SELECT weight
+FROM surveys
+ORDER BY weight DESC;
+
+SELECT weight
+FROM surveys
+WHERE weight IS NOT ""
+ORDER BY weight DESC;
+
+SELECT weight
+FROM surveys
+WHERE weight <> ""
+ORDER BY weight DESC;
+
+SELECT weight
+FROM surveys
+WHERE weight != ""
+ORDER BY weight DESC;
+
+-- challenge 1.
+-- Write a query that returns:
+-- the total weight, average weight, minimum and maximum weights for all animals
+-- caught over the duration of the survey.
+-- Keep rows where weight is not equal to "" empty values
+
+SELECT SUM(weight), AVG(weight), MIN(weight), MAX(weight)
+FROM surveys
+WHERE weight != "";
+
+-- Challenge 2.
+-- Can you modify the previous query, so that it outputs these values only for
+-- weights between 5 and 10?
+
+SELECT SUM(weight), AVG(weight), MIN(weight), MAX(weight)
+FROM surveys
+WHERE weight > 5 AND weight < 10;
+
+-- GROUP BY
+-- Aggregated functions like COUNT, SUM, MIN, MAX and AVG shine with groups
+
+SELECT species_id, COUNT(*)
+FROM surveys
+GROUP BY species_id;
+
+-- We can have one or more groups0
+
+-- Challenge
+
+ --   How many individuals were counted in each year in total
+ --   How many were counted each year, for each different species
+ --   The average weights of each species in each year
+
+-- Can you get the answer to both 2 and 3 in a single query?
+
+SELECT year, COUNT(*)
+FROM surveys
+GROUP BY year;
+
+SELECT year, species_id, COUNT(*), ROUND(AVG(weight) , 3)
+FROM surveys
+GROUP BY year, species_id;
+
+-- ORDER BY
+
+SELECT year, species_id, COUNT(*), ROUND(AVG(weight) , 3)
+FROM surveys
+GROUP BY year, species_id
+ORDER BY COUNT(*) DESC;
+
+-- AS
+-- help customize names of fields and tables
+SELECT year, species_id, COUNT(*) AS counts, ROUND(AVG(weight) , 3) avg_weight
+FROM surveys
+GROUP BY year, species_id
+ORDER BY counts DESC;
+
+-- HAVING
+-- return information about species with a count higher than 10:
+SELECT species_id, COUNT(species_id) AS occurrences
+FROM surveys
+GROUP BY species_id
+HAVING occurrences > 10
+ORDER BY occurrences;
+
+-- Challenge
+-- return information about taxa from species with a more than 10 occurrences
+SELECT taxa, COUNT(*) AS occurrences
+FROM species
+GROUP BY taxa;
+HAVING occurrences > 10
+ORDER BY occurrences;
