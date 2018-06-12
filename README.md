@@ -1,2 +1,2 @@
 # DC_SQL_ecology
-Queries
+Queries based on Data Carpentry Ecology lesson
